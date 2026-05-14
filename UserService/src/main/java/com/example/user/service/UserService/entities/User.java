@@ -1,13 +1,13 @@
 package com.example.user.service.UserService.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "micro_users")
@@ -26,4 +26,7 @@ public class User {
     private String email;
     @Column(name = "ABOUT")
     private String about;
+
+    @Transient /// this annotation means, This field will NOT be saved in the database
+    private List<Rating> ratingList = new ArrayList<>();
 }
