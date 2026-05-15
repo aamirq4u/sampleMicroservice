@@ -1,9 +1,14 @@
 spring:
   application:
     name: RatingService
+
+  mongodb:
+    uri: mongodb://localhost:27017
+    database: microservices
+
   data:
     mongodb:
-      uri: mongodb://localhost:27017
-      database: microservices
       auto-index-creation: true
 
+server:
+  port: 8083
