@@ -1,5 +1,6 @@
 package com.example.user.service.UserService.services.impl;
 
+import com.example.user.service.UserService.entities.Hotel;
 import com.example.user.service.UserService.entities.Rating;
 import com.example.user.service.UserService.entities.User;
 import com.example.user.service.UserService.exception.ResourceNotFoundException;
@@ -7,12 +8,15 @@ import com.example.user.service.UserService.repositories.UserRepository;
 import com.example.user.service.UserService.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,9 +52,23 @@ public class UserServiceImpl implements UserService {
         // http://localhost:8083/ratings/users/8afa303e-acb7-4e93-af10-e51551de67fd
 
         //ArrayList<Rating> ratingOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/8afa303e-acb7-4e93-af10-e51551de67fd", ArrayList.class);
-        ArrayList<Rating> ratingOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/"+user.getUserId(), ArrayList.class);
-       // log.info("User Controller -> getUser(): getForObject() "+ratingOfUser.toString());
-        user.setRatingList(ratingOfUser);
+        Rating[] ratingsOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/" + user.getUserId(), Rating[].class);
+        // log.info("User Controller -> getUser(): getForObject() "+ratingOfUser.toString());
+
+        List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
+        List<Rating> ratingList = ratings.stream().map(rating -> {
+            // api call to hotel service to get hotel
+            //http://localhost:8082/hotels/4860804a-6c78-42ad-bd97-7bd3f79671ee
+            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://localhost:8082/hotels/"+ rating.getHotelId(), Hotel.class);
+            Hotel hotel = forEntity.getBody();
+            // log.info("User Controller -> getUser(): getForEntity() "+forEntity);
+            // log.info("User Controller -> getUser(): getForEntity() hotel "+hotel);
+            // set the hotel rating
+            rating.setHotel(hotel);
+            // return the rating
+            return rating;
+        }).toList();
+        user.setRatingList(ratingList);
         return user;
 
 
