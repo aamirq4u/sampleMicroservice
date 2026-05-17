@@ -4,6 +4,7 @@ import com.example.user.service.UserService.entities.Hotel;
 import com.example.user.service.UserService.entities.Rating;
 import com.example.user.service.UserService.entities.User;
 import com.example.user.service.UserService.exception.ResourceNotFoundException;
+import com.example.user.service.UserService.external.service.HotelService;
 import com.example.user.service.UserService.repositories.UserRepository;
 import com.example.user.service.UserService.services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private HotelService hotelService;
 
     @Override
     public User saveUser(User user) {
@@ -59,8 +63,10 @@ public class UserServiceImpl implements UserService {
         List<Rating> ratingList = ratings.stream().map(rating -> {
             // api call to hotel service to get hotel
             //http://localhost:8082/hotels/4860804a-6c78-42ad-bd97-7bd3f79671ee
-            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+ rating.getHotelId(), Hotel.class);
-            Hotel hotel = forEntity.getBody();
+            /*ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+ rating.getHotelId(), Hotel.class);
+            Hotel hotel = forEntity.getBody();*/
+
+            Hotel hotel = hotelService.getHotel(rating.getHotelId());
             // log.info("User Controller -> getUser(): getForEntity() "+forEntity);
             // log.info("User Controller -> getUser(): getForEntity() hotel "+hotel);
             // set the hotel rating
