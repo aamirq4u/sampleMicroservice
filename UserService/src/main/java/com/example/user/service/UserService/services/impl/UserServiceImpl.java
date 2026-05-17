@@ -52,14 +52,14 @@ public class UserServiceImpl implements UserService {
         // http://localhost:8083/ratings/users/8afa303e-acb7-4e93-af10-e51551de67fd
 
         //ArrayList<Rating> ratingOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/8afa303e-acb7-4e93-af10-e51551de67fd", ArrayList.class);
-        Rating[] ratingsOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/" + user.getUserId(), Rating[].class);
+        Rating[] ratingsOfUser = restTemplate.getForObject("http://RATING-SERVICE/ratings/users/" + user.getUserId(), Rating[].class);
         // log.info("User Controller -> getUser(): getForObject() "+ratingOfUser.toString());
 
         List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
         List<Rating> ratingList = ratings.stream().map(rating -> {
             // api call to hotel service to get hotel
             //http://localhost:8082/hotels/4860804a-6c78-42ad-bd97-7bd3f79671ee
-            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://localhost:8082/hotels/"+ rating.getHotelId(), Hotel.class);
+            ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://HOTEL-SERVICE/hotels/"+ rating.getHotelId(), Hotel.class);
             Hotel hotel = forEntity.getBody();
             // log.info("User Controller -> getUser(): getForEntity() "+forEntity);
             // log.info("User Controller -> getUser(): getForEntity() hotel "+hotel);
