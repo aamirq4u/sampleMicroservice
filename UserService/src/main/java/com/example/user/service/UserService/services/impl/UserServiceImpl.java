@@ -5,6 +5,7 @@ import com.example.user.service.UserService.entities.Rating;
 import com.example.user.service.UserService.entities.User;
 import com.example.user.service.UserService.exception.ResourceNotFoundException;
 import com.example.user.service.UserService.external.service.HotelService;
+import com.example.user.service.UserService.external.service.RatingService;
 import com.example.user.service.UserService.repositories.UserRepository;
 import com.example.user.service.UserService.services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private HotelService hotelService;
+    @Autowired
+    private RatingService ratingService;
 
     @Override
     public User saveUser(User user) {
@@ -56,8 +59,10 @@ public class UserServiceImpl implements UserService {
         // http://localhost:8083/ratings/users/8afa303e-acb7-4e93-af10-e51551de67fd
 
         //ArrayList<Rating> ratingOfUser = restTemplate.getForObject("http://localhost:8083/ratings/users/8afa303e-acb7-4e93-af10-e51551de67fd", ArrayList.class);
-        Rating[] ratingsOfUser = restTemplate.getForObject("http://RATING-SERVICE/ratings/users/" + user.getUserId(), Rating[].class);
+        //Rating[] ratingsOfUser = restTemplate.getForObject("http://RATING-SERVICE/ratings/users/" + user.getUserId(), Rating[].class);
         // log.info("User Controller -> getUser(): getForObject() "+ratingOfUser.toString());
+
+        Rating[] ratingsOfUser = ratingService.getRating(user.getUserId());
 
         List<Rating> ratings = Arrays.stream(ratingsOfUser).toList();
         List<Rating> ratingList = ratings.stream().map(rating -> {
